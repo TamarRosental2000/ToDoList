@@ -18,7 +18,7 @@ namespace ToDoList.Db.Context
         public DbSet<Task> Tasks { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Database=ToDoList;Server=ILTAMARR-LT1;User Id=CORP\\tamarr;Password=Tr@531640;Encrypt=false;", b => b.MigrationsAssembly("ToDoList"));
+            options.UseSqlServer("Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false", b => b.MigrationsAssembly("ToDoList"));
         }
 
 
