@@ -20,10 +20,5 @@ namespace ToDoList.Db.Context
         {
             options.UseSqlServer("Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false", b => b.MigrationsAssembly("ToDoList"));
         }
-
-
-        
-        //=>
-        //        options.UseSqlite("DataSource=ToDoList.Db;Cache=Shared");
     }
 }
