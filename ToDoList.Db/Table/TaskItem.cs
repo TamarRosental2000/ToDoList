@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ToDoList.Db.Table
 {
-    public class Task
+    public class TaskItem
     {
         [Key]
         [Required]

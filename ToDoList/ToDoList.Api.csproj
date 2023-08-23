@@ -22,4 +22,9 @@
     <ProjectReference Include="..\ToDoList.Db\ToDoList.Db.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Utils\" />
+  </ItemGroup>
+
 </Project>
