@@ -12,6 +12,7 @@ namespace ToDoList.Db.Table
     public class TaskItem
     {
         [Key]
+
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TaskId { get; set; }
