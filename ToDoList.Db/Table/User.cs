@@ -6,6 +6,11 @@ namespace ToDoList.Db.Table
 {
     public class User
     {
+        public User(string? name)
+        {
+            Name = name;
+        }
+
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

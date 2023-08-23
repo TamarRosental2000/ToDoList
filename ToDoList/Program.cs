@@ -1,3 +1,26 @@
+//using Microsoft.AspNetCore;
+//using Microsoft.AspNetCore.Hosting;
+//using NHibernate.Engine;
+//using ToDoList.Api;
+
+//namespace Api
+//{
+//    public class Program
+//    {
+//        public static void Main(string[] args)
+//        {
+//            CreateWebHostBuilder(args).Build().Run();
+//        }
+
+//        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+//        {
+//            return WebHost.CreateDefaultBuilder(args)
+//                .UseStartup<Startup>();
+//        }
+//    }
+//}
+
+using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Db.Context;
 
@@ -13,6 +36,8 @@ builder.Services.AddDbContext<ToDoListDBContext>();
 var dbContextOptionsBuilder = new DbContextOptionsBuilder<ToDoListDBContext>();
 dbContextOptionsBuilder.UseSqlServer("DataSource=ToDoList.Db;Cache=Shared");
 
+//builder.Services.AddSingleton(new SessionFactory("Server=.\\Sql;Database=ILTAMARR-LT1;Trusted_Connection=true;"));
+//builder.Services.AddScoped<UnitOfWork>();
 
 
 var app = builder.Build();

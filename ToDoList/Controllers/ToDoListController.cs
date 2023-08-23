@@ -1,5 +1,7 @@
+using Logic.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using ToDoList.Db.Query;
 using ToDoList.Db.Table;
 
 namespace ToDoList.Controllers
@@ -8,16 +10,17 @@ namespace ToDoList.Controllers
     [Route("[controller]")]
     public class ToDoListController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
+        private readonly UnitOfWork _unitOfWork;
+        private readonly UserRepository _userRepository;
+        private readonly TaskItemRepository _taskItemRepository;
         private readonly ILogger<ToDoListController> _logger;
 
-        public ToDoListController(ILogger<ToDoListController> logger)
+        public ToDoListController(ILogger<ToDoListController> logger, UnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
+            _userRepository = new UserRepository(unitOfWork);
+            _taskItemRepository = new TaskItemRepository(unitOfWork);
         }
         /// <summary>
         /// Add user.
@@ -25,12 +28,38 @@ namespace ToDoList.Controllers
         [Route("create/user")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> AddUser(
+        public IActionResult AddUser(
             [FromBody] UserModel request)
         {
-            //await _mediator.Send(new PlaceUserTaskCommand(userId, request.Products, request.Currency));
+            if (String.IsNullOrEmpty(request.Name))
+            {
+                //invalid request
+            }
+            var user = new User(request.Name);
+            _userRepository.Save(user);
+            _unitOfWork.Commit();
+            return Ok();
+        }
 
-            return Created(string.Empty, null);
+        /// <summary>
+        /// Inactive user.
+        /// </summary>
+        /// <param name="userId">User ID.</param>
+        [Route("user/Inactive/{userId}")]
+        [HttpPut]
+        [ProducesResponseType((int)HttpStatusCode.Unused)]
+        public IActionResult DeleteUser(
+            [FromRoute] int userId)
+        {
+            var user = _userRepository.GetById(userId);
+            if (user ==null)
+            {
+                //return Error($"No student found for Id");
+            }
+            user.IsActive = false;
+            _userRepository.Save(user);
+            _unitOfWork.Commit();
+            return Ok();
         }
 
         /// <summary>

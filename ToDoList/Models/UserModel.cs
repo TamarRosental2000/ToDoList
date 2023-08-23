@@ -6,23 +6,26 @@ namespace ToDoList.Db.Table
 {
     public class UserModel:User
     {
-        private readonly IList<TaskItem> _userTask = new List<TaskItem>();
+        private readonly IList<User> _userTask = new List<User>();
 
-        public virtual IReadOnlyList<TaskItem> UserTask => _userTask.ToList();
-        public virtual TaskItem FirstTask => GetTask(0);
-        protected UserModel() { }
-        private TaskItem GetTask(int index)
+        public UserModel(string? name) : base(name)
+        {
+        }
+
+        public virtual IReadOnlyList<User> UserTask => _userTask.ToList();
+        public virtual User FirstTask => GetTask(0);
+        private User GetTask(int index)
         {
             if (_userTask.Count > index)
                 return _userTask[index];
 
             return null;
         }
-        public virtual void RemoveTask(TaskItem task)
+        public virtual void RemoveTask(User task)
         {
             _userTask.Remove(task);
         }
-        public virtual void AddTask(TaskItem task)
+        public virtual void AddTask(User task)
         {
             _userTask.Add(task);
         }

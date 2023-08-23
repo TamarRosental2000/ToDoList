@@ -12,7 +12,7 @@ namespace ToDoList.Api.Logic
                 Description= taskItemModel.Description,
                 DueDate= taskItemModel.DueDate,
                 IsDone= taskItemModel.IsDone,
-                ParentTaskId= taskItemModel.ParentTaskId,   
+                ParentTaskId= taskItemModel.ParentTaskId,
                 Status= taskItemModel.Status,
                 TaskId= taskItemModel.TaskId,
                 Title= taskItemModel.Title,
