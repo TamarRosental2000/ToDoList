@@ -19,7 +19,7 @@ namespace ToDoList.Api
         {
             services.AddMvc();
 
-            services.AddSingleton(new SessionFactory(Configuration["ConnectionString"]));
+            services.AddSingleton(new SessionFactory());
             services.AddScoped<UnitOfWork>();
             services.AddControllers();
             services.AddEndpointsApiExplorer();

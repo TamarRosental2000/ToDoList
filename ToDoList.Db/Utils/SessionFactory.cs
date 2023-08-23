@@ -13,11 +13,13 @@ namespace Logic.Utils
 {
     public sealed class SessionFactory
     {
+        private const string CONNECTION_STRING = "\"Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false\"\"Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false\"";
         private readonly ISessionFactory _factory;
 
-        public SessionFactory(string connectionString)
+        public SessionFactory()
         {
-            _factory = BuildSessionFactory(connectionString);
+
+            _factory = BuildSessionFactory(CONNECTION_STRING);
         }
 
         internal ISession OpenSession()

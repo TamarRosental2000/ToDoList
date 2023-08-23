@@ -22,6 +22,8 @@
 
 using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Web.Http.ExceptionHandling;
 using ToDoList.Db.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,9 +37,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ToDoListDBContext>();
 var dbContextOptionsBuilder = new DbContextOptionsBuilder<ToDoListDBContext>();
 dbContextOptionsBuilder.UseSqlServer("DataSource=ToDoList.Db;Cache=Shared");
+builder.Services.AddMvc();
 
-//builder.Services.AddSingleton(new SessionFactory("Server=.\\Sql;Database=ILTAMARR-LT1;Trusted_Connection=true;"));
-//builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddSingleton<SessionFactory>();
+builder.Services.AddScoped<UnitOfWork>();
 
 
 var app = builder.Build();
