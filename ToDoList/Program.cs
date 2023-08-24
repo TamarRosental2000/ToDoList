@@ -1,25 +1,3 @@
-//using Microsoft.AspNetCore;
-//using Microsoft.AspNetCore.Hosting;
-//using NHibernate.Engine;
-//using ToDoList.Api;
-
-//namespace Api
-//{
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            CreateWebHostBuilder(args).Build().Run();
-//        }
-
-//        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
-//        {
-//            return WebHost.CreateDefaultBuilder(args)
-//                .UseStartup<Startup>();
-//        }
-//    }
-//}
-
 using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Db.Context;
@@ -41,12 +19,12 @@ dbContextOptionsBuilder.UseSqlServer("DataSource=ToDoList.Db;Cache=Shared");
 builder.Services.AddMvc();
 
 builder.Services.AddSingleton<SessionFactory>();
-builder.Services.AddScoped<UnitOfWork>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<TaskItemRepository>();
-builder.Services.AddScoped<TaskQuery>();
-builder.Services.AddScoped<UserQuery>();
-builder.Services.AddScoped<ValidateRequest>();
+builder.Services.AddSingleton<UnitOfWork>();
+builder.Services.AddSingleton<UserRepository>();
+builder.Services.AddSingleton<TaskItemRepository>();
+builder.Services.AddSingleton<TaskQuery>();
+builder.Services.AddSingleton<UserQuery>();
+builder.Services.AddSingleton<ValidateRequest>();
 
 
 var app = builder.Build();
