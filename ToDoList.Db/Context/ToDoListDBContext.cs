@@ -1,14 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToDoList.Db.Table;
-using Microsoft.EntityFrameworkCore;
 using TaskItem = ToDoList.Db.Table.TaskItem;
-using Microsoft.Extensions.Options;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ToDoList.Db.Context
 {

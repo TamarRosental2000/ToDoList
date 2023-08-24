@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata;
 using NHibernate;
 
 namespace Logic.Utils

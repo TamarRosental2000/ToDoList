@@ -22,8 +22,6 @@
 
 using Logic.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System.Web.Http.ExceptionHandling;
 using ToDoList.Db.Context;
 using ToDoList.Db.Command;
 using ToDoList.Db.Query;

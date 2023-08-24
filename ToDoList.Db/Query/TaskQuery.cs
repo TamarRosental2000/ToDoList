@@ -1,10 +1,4 @@
 ﻿using Logic.Utils;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToDoList.Db.Table;
 
 namespace ToDoList.Db.Query
@@ -33,7 +27,7 @@ namespace ToDoList.Db.Query
 
         public IReadOnlyList<TaskItem> GetByUserId(int userId)
         {
-            return GetList().Where(t=>t.UserId == userId).ToList();
+            return GetList().Where(t => t.UserId == userId).ToList();
         }
 
     }
