@@ -1,6 +1,10 @@
+using Azure.Core;
 using Logic.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Net;
+using ToDoList.Api.Logic;
+using ToDoList.Api.Models;
 using ToDoList.Db.Command;
 using ToDoList.Db.Query;
 using ToDoList.Db.Table;
@@ -15,15 +19,19 @@ namespace ToDoList.Controllers
         private readonly UserRepository _userRepository;
         private readonly TaskItemRepository _taskItemRepository;
         private readonly TaskQuery _taskQuery;
+        private readonly UserQuery _userQuery;
+        private readonly ValidateRequest _ValidateRequest;
         private readonly ILogger<ToDoListController> _logger;
 
-        public ToDoListController(ILogger<ToDoListController> logger, UnitOfWork unitOfWork, TaskQuery taskQuery)
+        public ToDoListController(ILogger<ToDoListController> logger, UnitOfWork unitOfWork, TaskQuery taskQuery, ValidateRequest validateRequest, UserQuery userQuery)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _userRepository = new UserRepository(unitOfWork);
             _taskItemRepository = new TaskItemRepository(unitOfWork);
             _taskQuery = taskQuery;
+            _ValidateRequest = validateRequest;
+            _userQuery = userQuery;
         }
         /// <summary>
         /// Add user.
@@ -31,17 +39,25 @@ namespace ToDoList.Controllers
         [Route("create/user")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public IActionResult AddUser(
-            [FromBody] UserModel request)
+        public async Task<IActionResult> AddUser([FromBody] User request)
         {
-            if (String.IsNullOrEmpty(request.Name))
+            try
             {
-                //invalid request
+                var errMsg = _ValidateRequest.ValidateUser(request);
+                if (!string.IsNullOrEmpty(errMsg))
+                {
+                    _logger.Log(LogLevel.Error, errMsg);
+                    return BadRequest(request);
+                }
+                _userRepository.Save(request);
+                return Ok();
             }
-            var user = new User(request.Name);
-            _userRepository.Save(user);
-            _unitOfWork.Commit();
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
+
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -51,18 +67,27 @@ namespace ToDoList.Controllers
         [Route("user/Inactive/{userId}")]
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.Unused)]
-        public IActionResult DeleteUser(
-            [FromRoute] int userId)
+        public async Task<IActionResult> InactiveUser([FromRoute] int userId)
         {
-            var user = _userRepository.GetById(userId);
-            if (user ==null)
+            try
             {
-                //return Error($"No student found for Id");
+                var user = _userQuery.GetById(userId);
+                var errMsg = _ValidateRequest.ValidateUser(user);
+                if (!string.IsNullOrEmpty(errMsg))
+                {
+                    _logger.Log(LogLevel.Error, errMsg);
+                    return BadRequest(user);
+                }
+                user.IsActive = false;
+                _userRepository.Save(user);
+                return Ok();
             }
-            user.IsActive = false;
-            _userRepository.Save(user);
-            _unitOfWork.Commit();
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
+
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -73,71 +98,85 @@ namespace ToDoList.Controllers
         [Route("tasks/{userId}")]
         [HttpGet]
         [ProducesResponseType(typeof(List<TaskItem>), (int)HttpStatusCode.OK)]
-        public async Task<IEnumerable<TaskItem>> GetUserTask([FromRoute] Guid userId)
+        public async Task<TaskListResponse> GetUserTasks([FromRoute] int userId)
         {
-            var taskList = _taskQuery.GetList();
-            return taskList;
+            try
+            {
+                var taskList = _taskQuery.GetByUserId(userId);
+                return new TaskListResponse()
+                {
+                    Status = Ok(),
+                    Tasks = taskList
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
+
+                return new TaskListResponse()
+                {
+                    Status = BadRequest(ex.Message),
+                    Tasks = null
+                };
+            }
         }
-        /// <summary>
-        /// Get task details.
-        /// </summary>
-        /// <param name="taskId">TaskId ID.</param>
-        [Route("tasks/detail/{taskId}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(TaskItem), (int)HttpStatusCode.OK)]
-        public async Task<TaskItem> GetTaskDetails([FromRoute] Guid taskId)
-        {
-            return null;
-        }
+
         /// <summary>
         /// Add user task.
         /// </summary>
-        /// <param name="userId">User ID.</param>
         /// <param name="request">Task list.</param>
-        [Route("add/task/{userId}")]
+        [Route("add/task")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> AddUserTask(
-            [FromRoute] Guid userId,
-            [FromBody] TaskItem request)
+        public async Task<IActionResult> CreateTask([FromBody] TaskItem task)
         {
-            //await _mediator.Send(new PlaceUserTaskCommand(userId, request.Products, request.Currency));
+            try
+            {
+                var errMsg = _ValidateRequest.ValidateTask(task);
+                if (!string.IsNullOrEmpty(errMsg))
+                {
+                    _logger.Log(LogLevel.Error, errMsg);
+                    return BadRequest(task);
+                }
+                _taskItemRepository.Save(task);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
 
-            return Created(string.Empty, null);
-        }
-        /// <summary>
-        /// Change user task.
-        /// </summary>
-        /// <param name="userId">User ID.</param>
-        /// <param name="taskId">Task ID.</param>
-        /// <param name="request">List of products.</param>
-        [Route("{userId}/tasks/edit/{taskId}")]
-        [HttpPut]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> ChangeUserTask(
-            [FromRoute] Guid userId,
-            [FromRoute] Guid taskId,
-            [FromBody] TaskItem request)
-        {
-            //await _mediator.Send(new ChangeUserTaskCommand(userId, taskId, request.Products, request.Currency));
+                return BadRequest(ex.Message);
+            }
 
-            return Ok();
         }
+
+
         /// <summary>
         /// Remove user task.
         /// </summary>
-        /// <param name="userId">User ID.</param>
         /// <param name="taskId">Task ID.</param>
-        [Route("{userId}/orders/{taskId}")]
+        [Route("removeTask/{taskId}")]
         [HttpDelete]
         [ProducesResponseType(typeof(List<TaskItem>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> RemoveCustomerOrder(
-            [FromRoute] Guid userId,
-            [FromRoute] Guid taskId)
+        public async Task<IActionResult> RemoveTask(
+            [FromRoute] int taskId)
         {
-            //await _mediator.Send(new RemoveCustomerOrderCommand(userId, taskId));
+            try
+            {
+                var task = _taskQuery.GetById(taskId);
+                if (task != null)
+                {
+                    _taskItemRepository.Delete(task);
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
 
-            return Ok();
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

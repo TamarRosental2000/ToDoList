@@ -21,11 +21,14 @@ namespace ToDoList.Db.Command
         public void Save(TaskItem taskItem)
         {
             _unitOfWork.SaveOrUpdate(taskItem);
+            _unitOfWork.Commit();
         }
 
         public void Delete(TaskItem taskItem)
         {
             _unitOfWork.Delete(taskItem);
+            _unitOfWork.Commit();
         }
+
     }
 }

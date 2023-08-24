@@ -27,6 +27,7 @@ using System.Web.Http.ExceptionHandling;
 using ToDoList.Db.Context;
 using ToDoList.Db.Command;
 using ToDoList.Db.Query;
+using ToDoList.Api.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<TaskItemRepository>();
 builder.Services.AddScoped<TaskQuery>();
 builder.Services.AddScoped<UserQuery>();
+builder.Services.AddScoped<ValidateRequest>();
 
 
 var app = builder.Build();

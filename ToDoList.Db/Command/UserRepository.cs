@@ -19,15 +19,8 @@ namespace ToDoList.Db.Command
         public void Save(User taskItem)
         {
             _unitOfWork.SaveOrUpdate(taskItem);
+            _unitOfWork.Commit();
         }
-        public User GetById(int id)
-        {
-            return _unitOfWork.Get<User>(id);
-        }
-        public User GetByName(string name)
-        {
-            return _unitOfWork.Query<User>()
-                .SingleOrDefault(x => x.Name == name);
-        }
+       
     }
 }

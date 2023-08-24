@@ -19,7 +19,7 @@ namespace Logic.Utils
         public SessionFactory()
         {
 
-            _factory = BuildSessionFactory(CONNECTION_STRING);
+            _factory = BuildSessionFactory();
         }
 
         internal ISession OpenSession()
@@ -27,20 +27,22 @@ namespace Logic.Utils
             return _factory.OpenSession();
         }
 
-        private static ISessionFactory BuildSessionFactory(string connectionString)
+        private static ISessionFactory BuildSessionFactory()
         {
+            //FluentConfiguration configuration = Fluently.Configure()
+            //    .Database(MsSqlConfiguration.MsSql2012.ConnectionString(CONNECTION_STRING))
+            //    .Mappings(m => m.FluentMappings
+            //        .AddFromAssembly(Assembly.GetExecutingAssembly())
+            //        .Conventions.Add(
+            //            //ForeignKey.EndsWith("ID"),
+            //            ConventionBuilder.Property.When(criteria => criteria.Expect(x => x.Nullable, Is.Not.Set), x => x.Not.Nullable()))
+            //        .Conventions.Add<OtherConversions>()
+            //        .Conventions.Add<TableNameConvention>()
+            //        .Conventions.Add<HiLoConvention>()
+            //    );
             FluentConfiguration configuration = Fluently.Configure()
-                .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
-                .Mappings(m => m.FluentMappings
-                    .AddFromAssembly(Assembly.GetExecutingAssembly())
-                    .Conventions.Add(
-                        ForeignKey.EndsWith("ID"),
-                        ConventionBuilder.Property.When(criteria => criteria.Expect(x => x.Nullable, Is.Not.Set), x => x.Not.Nullable()))
-                    .Conventions.Add<OtherConversions>()
-                    .Conventions.Add<TableNameConvention>()
-                    .Conventions.Add<HiLoConvention>()
-                );
-
+    .Database(SQLiteConfiguration.Standard.UsingFile("ToDoList.Db"))
+    .Mappings(m=>m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
             return configuration.BuildSessionFactory();
         }
 
