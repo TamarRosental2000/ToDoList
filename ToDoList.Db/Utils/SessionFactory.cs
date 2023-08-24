@@ -13,7 +13,7 @@ namespace Logic.Utils
 {
     public sealed class SessionFactory
     {
-        private const string CONNECTION_STRING = "\"Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false\"\"Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false\"";
+        private const string CONNECTION_STRING = "Database=ToDoList;Server=ILTAMARR-LT1;Trusted_Connection=True;Encrypt=false";
         private readonly ISessionFactory _factory;
 
         public SessionFactory()

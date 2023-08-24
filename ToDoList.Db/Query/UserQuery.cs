@@ -1,6 +1,7 @@
 ﻿using Logic.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,26 +9,28 @@ using ToDoList.Db.Table;
 
 namespace ToDoList.Db.Query
 {
-    public sealed class UserRepository
+    public class UserQuery
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public UserRepository(UnitOfWork unitOfWork)
+        public UserQuery(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-        }
-        public void Save(User taskItem)
-        {
-            _unitOfWork.SaveOrUpdate(taskItem);
         }
         public User GetById(int id)
         {
             return _unitOfWork.Get<User>(id);
         }
-        public User GetByName(string name)
+
+        public IReadOnlyList<User> GetList()
         {
-            return _unitOfWork.Query<User>()
-                .SingleOrDefault(x => x.Name == name);
+            IQueryable<User> query = _unitOfWork.Query<User>();
+
+            List<User> result = query.ToList();
+
+            return result;
         }
+
+
     }
 }

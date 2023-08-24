@@ -1,6 +1,7 @@
 using Logic.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using ToDoList.Db.Command;
 using ToDoList.Db.Query;
 using ToDoList.Db.Table;
 
@@ -13,14 +14,16 @@ namespace ToDoList.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly UserRepository _userRepository;
         private readonly TaskItemRepository _taskItemRepository;
+        private readonly TaskQuery _taskQuery;
         private readonly ILogger<ToDoListController> _logger;
 
-        public ToDoListController(ILogger<ToDoListController> logger, UnitOfWork unitOfWork)
+        public ToDoListController(ILogger<ToDoListController> logger, UnitOfWork unitOfWork, TaskQuery taskQuery)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _userRepository = new UserRepository(unitOfWork);
             _taskItemRepository = new TaskItemRepository(unitOfWork);
+            _taskQuery = taskQuery;
         }
         /// <summary>
         /// Add user.
@@ -70,15 +73,10 @@ namespace ToDoList.Controllers
         [Route("tasks/{userId}")]
         [HttpGet]
         [ProducesResponseType(typeof(List<TaskItem>), (int)HttpStatusCode.OK)]
-        public async Task< IEnumerable<TaskItem> >GetUserTask([FromRoute] Guid userId)
+        public async Task<IEnumerable<TaskItem>> GetUserTask([FromRoute] Guid userId)
         {
-            return Enumerable.Range(1, 5).Select(index => new TaskItem
-            {
-                //Date = DateTime.Now.AddDays(index),
-                //TemperatureC = Random.Shared.Next(-20, 55),
-                //Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var taskList = _taskQuery.GetList();
+            return taskList;
         }
         /// <summary>
         /// Get task details.

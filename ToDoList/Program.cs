@@ -25,6 +25,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Web.Http.ExceptionHandling;
 using ToDoList.Db.Context;
+using ToDoList.Db.Command;
+using ToDoList.Db.Query;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,10 @@ builder.Services.AddMvc();
 
 builder.Services.AddSingleton<SessionFactory>();
 builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<TaskItemRepository>();
+builder.Services.AddScoped<TaskQuery>();
+builder.Services.AddScoped<UserQuery>();
 
 
 var app = builder.Build();
